@@ -359,6 +359,7 @@ export default function Plans({ user }) {
   }
 
   const free = plans.find((p) => p.id === "free") || DEFAULT_PLANS[0];
+  const activePlan = plans.find((p) => String(p.id) === String(active.planId)) || null;
   const upgrades = plans.filter((p) => p.id !== "free");
 
   return (
@@ -395,6 +396,11 @@ export default function Plans({ user }) {
         ) : (
           <div className="plans-current-meta">
             <div className="plans-status-pill">Active</div>
+            <div className="plans-muted" style={{ marginTop: 6 }}>
+              <LocalizedPlanPrice usd={Number(activePlan?.price || 0)} />
+              <span> / </span>
+              <span>month</span>
+            </div>
             {active.expiresIn && !active.expired && (
               <div className="plans-muted">
                 Expires in: <span className="plans-exp">{active.expiresIn}</span>
