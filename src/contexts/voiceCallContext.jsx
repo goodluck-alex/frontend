@@ -33,8 +33,23 @@ export function normalizeDialPhone(raw) {
 
 export function VoiceCallProvider({ user, children }) {
   const { socketRef } = useChatSocket();
-  const myPhone =
-    user?.id || user?.phone || (user?.subscriberId ? `+256${user.subscriberId}` : null);
+  // "fromUserId" must be a phone identity (E.164-ish), not a domain/user id.
+  const myPhone = (() => {
+    const raw =
+      user?.phoneNumber ??
+      user?.phone ??
+      (user?.subscriberId && user?.countryPrefix
+        ? `${user.countryPrefix}${user.subscriberId}`
+        : user?.subscriberId
+          ? `+256${user.subscriberId}`
+          : null);
+    if (!raw) return null;
+    try {
+      return normalizeDialPhone(raw);
+    } catch {
+      return null;
+    }
+  })();
 
   const peerRef = useRef(null);
   const incomingFromRef = useRef(null);
