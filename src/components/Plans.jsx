@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "@/services/api";
 import { createOrInitiatePayment, getPaymentMethods, getPaymentStatus } from "@/services/paymentApi";
+import { useLocalizedUsdPrice } from "@/hooks/useLocalizedUsdPrice";
 
 const DEFAULT_PLANS = [
   { id: "free", name: "Free Plan", price: 0, dailyMinutes: 5, durationHours: null, unlimited: false },
@@ -11,6 +12,15 @@ const DEFAULT_PLANS = [
   { id: "weekly", name: "Weekly Unlimited", price: 1.5, durationHours: 24 * 7, unlimited: true },
   { id: "monthly", name: "Monthly Unlimited", price: 5, durationHours: 24 * 30, unlimited: true },
 ];
+
+function LocalizedPlanPrice({ usd }) {
+  const { primary, secondary } = useLocalizedUsdPrice(usd);
+  return (
+    <span>
+      {primary} {secondary ? <span className="plans-muted">{secondary}</span> : null}
+    </span>
+  );
+}
 
 function makeIdempotencyKey() {
   try {
@@ -59,6 +69,9 @@ export default function Plans({ user }) {
   const [checkoutUrl, setCheckoutUrl] = useState("");
   const [payStage, setPayStage] = useState("idle"); // idle | awaiting_action | pending | confirmed | failed
   const [methods, setMethods] = useState([]); // [{ method, providers: [{id,...}] }]
+
+  const payPlanUsdPrice = Number(payPlan?.price || 0);
+  const displayPayPlanPrice = useLocalizedUsdPrice(payPlanUsdPrice);
 
   useEffect(() => {
     // Keep expiry countdown fresh (otherwise useMemo only updates when user changes).
@@ -399,7 +412,9 @@ export default function Plans({ user }) {
             <div key={p.id} className="plans-upgrade-row">
               <div className="plans-upgrade-left">
                 <div className="plans-upgrade-name">{p.name}</div>
-                <div className="plans-upgrade-price">${Number(p.price).toFixed(p.price % 1 === 0 ? 0 : 2)}</div>
+                <div className="plans-upgrade-price">
+                  <LocalizedPlanPrice usd={Number(p.price || 0)} />
+                </div>
                 <div className="plans-muted">Unlimited GTN calls</div>
               </div>
               <button
@@ -433,7 +448,9 @@ export default function Plans({ user }) {
         <div className="plans-pay-backdrop" role="dialog" aria-modal="true">
           <div className="plans-pay-card">
             <div className="plans-pay-title">Buy {payPlan?.name}</div>
-            <div className="plans-pay-price">Price: ${Number(payPlan?.price || 0).toFixed((payPlan?.price || 0) % 1 === 0 ? 0 : 2)}</div>
+            <div className="plans-pay-price">
+              Price: {displayPayPlanPrice.primary} {displayPayPlanPrice.secondary ? <span className="plans-muted">{displayPayPlanPrice.secondary}</span> : null}
+            </div>
 
             {(error || info) && (
               <div className="plans-clean-toast" style={{ marginTop: 10 }}>

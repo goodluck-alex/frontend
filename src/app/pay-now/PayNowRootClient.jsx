@@ -7,6 +7,7 @@ import axios from "@/services/api";
 import { getPaymentMethods } from "@/services/paymentApi";
 import { useAuthedUser } from "@/lib/useAuthedUser";
 import PayShell from "@/components/PayShell";
+import { useLocalizedUsdPrice } from "@/hooks/useLocalizedUsdPrice";
 
 function Card({ title, children }) {
   return (
@@ -24,6 +25,7 @@ export default function PayNowRootClient() {
   const { user, loading, isAuthed } = useAuthedUser();
   const [plan, setPlan] = useState(null);
   const [methods, setMethods] = useState([]);
+  const displayPlanPrice = useLocalizedUsdPrice(Number(plan?.price || 0));
 
   useEffect(() => {
     if (!planId) return;
@@ -117,7 +119,8 @@ export default function PayNowRootClient() {
         <Card title="Pay Now">
           <div className="plans-current-name">{plan?.name || planId}</div>
           <div className="plans-muted" style={{ marginTop: 4 }}>
-            Price: ${Number(plan?.price || 0).toFixed((plan?.price || 0) % 1 === 0 ? 0 : 2)}
+            Price: {displayPlanPrice.primary}{" "}
+            {displayPlanPrice.secondary ? <span className="plans-muted">{displayPlanPrice.secondary}</span> : null}
           </div>
         </Card>
 
