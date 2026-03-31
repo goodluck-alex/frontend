@@ -1,0 +1,219 @@
+.root {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.5rem 1rem 3rem;
+  background: radial-gradient(circle at top, #1e6ff2 0, #020617 45%, #020617 100%);
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(15, 23, 42, 0.96);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  color: #e5e7eb;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4ade80;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.lead {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+.btnPrimary {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border-radius: 0.9rem;
+  border: none;
+  font-weight: 700;
+  background: linear-gradient(135deg, #1e6ff2, #28c76f);
+  color: #f9fafb;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnSecondary {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.55rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: transparent;
+  color: #cbd5e1;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.note {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin-top: 0.75rem;
+  line-height: 1.45;
+}
+
+.sectionTitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin: 1rem 0 0.5rem;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.65rem;
+  border-radius: 0.75rem;
+  background: rgba(2, 6, 23, 0.65);
+  border: 1px solid rgba(55, 65, 81, 0.8);
+  font-size: 0.8rem;
+}
+
+.name {
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.meta {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.inviteBtn {
+  flex-shrink: 0;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(30, 111, 242, 0.45);
+  background: rgba(30, 111, 242, 0.15);
+  color: #93c5fd;
+  cursor: pointer;
+}
+
+.inviteRowActions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.inviteRowShare :global(.referral-invite-share--row-icons) {
+  gap: 4px;
+}
+
+.inviteRowShare :global(.referral-copy-btn) {
+  padding: 0.3rem 0.45rem;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.6rem 0.65rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  resize: vertical;
+}
+
+.error {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #f87171;
+}
+
+.skipRow {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.skipLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.skipLink:hover {
+  color: #cbd5e1;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+  border: 3px solid rgba(148, 163, 184, 0.25);
+  border-top-color: #38bdf8;
+  border-radius: 50%;
+  animation: ff-spin 0.75s linear infinite;
+}
+
+@keyframes ff-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btnSpinner {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ff-spin 0.75s linear infinite;
+}
+
+.errorDot {
+  margin-top: 0.5rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f87171;
+}
+
+.emptyPad {
+  min-height: 0.5rem;
+  margin-bottom: 0.5rem;
+}

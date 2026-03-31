@@ -1,0 +1,168 @@
+.page {
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.header {
+  width: min(1100px, 92%);
+  margin: 0 auto;
+  padding: 20px 0 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle {
+  border: none;
+  border-radius: 999px;
+  padding: 9px 14px;
+  background: linear-gradient(135deg, #1e6ff2, #28c76f);
+  color: #fff;
+  font-weight: 700;
+}
+
+.container {
+  width: min(1000px, 92%);
+  margin: 0 auto;
+  padding: 28px 0 44px;
+}
+
+.title {
+  margin: 0 0 14px;
+  font-size: clamp(2rem, 4vw, 2.6rem);
+  background: linear-gradient(135deg, #1e6ff2, #28c76f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sectionTitle {
+  margin: 22px 0 10px;
+  color: #1e6ff2;
+  font-size: 1.5rem;
+}
+
+.lead,
+.text {
+  margin: 0 0 14px;
+  line-height: 1.7;
+  color: #334155;
+}
+
+.list {
+  margin: 0 0 8px 18px;
+  color: #334155;
+  line-height: 1.7;
+}
+
+.card {
+  margin: 18px 0;
+  border-radius: 12px;
+  padding: 18px;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.08);
+}
+
+.footer {
+  margin-top: 18px;
+  padding: 26px 16px 34px;
+  text-align: center;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.footer a {
+  color: #93c5fd;
+}
+
+.footerSub {
+  margin: 10px 0 0;
+  font-size: 0.9rem;
+  opacity: 0.95;
+}
+
+.socialIcons {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.socialIcons a img {
+  transition: transform 0.2s ease;
+}
+
+.socialIcons a:hover img {
+  transform: translateY(-2px);
+}
+
+:global(body.dark) .page {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+:global(body.dark) .lead,
+:global(body.dark) .text,
+:global(body.dark) .list {
+  color: #cbd5e1;
+}
+
+:global(body.dark) .card {
+  background: #1e293b;
+}
+
+/* Shared legal document body (About / Privacy / Terms / Contact) */
+.legalDoc h2 {
+  margin: 22px 0 10px;
+  color: #1e6ff2;
+  font-size: 1.25rem;
+}
+
+.legalDoc p,
+.legalDoc li {
+  line-height: 1.7;
+  color: #334155;
+  margin: 0 0 10px;
+}
+
+.legalDoc ul {
+  margin: 0 0 12px 18px;
+  padding: 0;
+}
+
+.legalDoc a {
+  color: #1e6ff2;
+  font-weight: 600;
+}
+
+.legalContactSocial {
+  display: flex;
+  gap: 14px;
+  margin: 12px 0 20px;
+  align-items: center;
+}
+
+.legalContactSocial a {
+  opacity: 0.95;
+  transition: transform 0.2s ease;
+}
+
+.legalContactSocial a:hover {
+  transform: translateY(-2px);
+}
+
+:global(body.dark) .legalDoc p,
+:global(body.dark) .legalDoc li {
+  color: #cbd5e1;
+}
+
+:global(body.dark) .legalDoc a {
+  color: #93c5fd;
+}

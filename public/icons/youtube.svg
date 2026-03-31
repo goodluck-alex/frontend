@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+
+<defs>
+<linearGradient id="gtnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#1E6FF2"/>
+<stop offset="100%" stop-color="#28C76F"/>
+</linearGradient>
+</defs>
+
+<rect x="5" y="5" width="90" height="90" rx="22" fill="url(#gtnGrad)"/>
+<path d="M25 35 h50 a10 10 0 0 1 10 10 v10 a10 10 0 0 1-10 10 h-50 a10 10 0 0 1-10-10 v-10 a10 10 0 0 1 10-10 z M45 42 l15 8 -15 8 z" fill="white" transform="translate(0,0) scale(1)"/>
+</svg>

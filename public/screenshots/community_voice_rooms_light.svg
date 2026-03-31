@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 600" width="300" height="600">
+
+<defs>
+<linearGradient id="gtnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#1E6FF2"/>
+<stop offset="100%" stop-color="#28C76F"/>
+</linearGradient>
+</defs>
+
+<rect x="0" y="0" width="300" height="600" rx="30" fill="#F8FAFC"/>
+<rect x="20" y="20" width="260" height="560" rx="24" fill="url(#gtnGrad)" opacity="0.2"/>
+<text x="150" y="80" font-size="26" fill="#0F172A" text-anchor="middle" font-family="Inter,Arial">GTN</text>
+<text x="150" y="120" font-size="18" fill="#0F172A" text-anchor="middle" font-family="Inter,Arial">Community Voice Rooms</text>
+</svg>
