@@ -3,8 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { login, register, logout, completeLogin2fa } from "@/services/authService";
-import axios from "@/services/api";
-import { SKIP_KEY } from "@/lib/findFriendsOnboarding";
 import {
   captureReferralFromCurrentUrl,
   clearStoredReferralAttribution,
@@ -202,17 +200,11 @@ export default function GtnAuthForm({ variant = "page" }) {
     let canceled = false;
     (async () => {
       try {
-        if (postAuthIntent === "signup") {
-          router.push("/find-friends?new=1");
-          return;
-        }
-        const me = await axios.get("/users/me", { timeoutMs: 20000 });
+        // Simplified post-auth flow:
+        // Login/signup should go straight to the dashboard. Any onboarding (find friends)
+        // should be a non-blocking banner inside the dashboard, not a forced step.
         if (canceled) return;
-        const hasChats = Boolean(me.data?.hasChats);
-        const skipped = typeof window !== "undefined" && window.localStorage.getItem(SKIP_KEY) === "1";
-        if (hasChats) router.push("/dashboard?tab=dial");
-        else if (!skipped) router.push("/find-friends?first=1");
-        else router.push("/dashboard");
+        router.replace("/dashboard");
       } catch (e) {
         if (canceled) return;
         logout();

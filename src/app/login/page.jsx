@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import GtnAuthForm from "@/components/GtnAuthForm";
 
 function AuthFallback() {
@@ -14,6 +15,16 @@ function AuthFallback() {
 }
 
 export default function AuthPage() {
+  const router = useRouter();
+  useEffect(() => {
+    try {
+      const token = typeof window !== "undefined" ? window.localStorage.getItem("gtn_token") : null;
+      if (token) router.replace("/dashboard");
+    } catch {
+      /* ignore */
+    }
+  }, [router]);
+
   return (
     <Suspense fallback={<AuthFallback />}>
       <GtnAuthForm variant="page" />

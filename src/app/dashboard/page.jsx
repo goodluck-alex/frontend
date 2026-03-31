@@ -87,6 +87,19 @@ function DashboardContent() {
           applyUserProfile(res.data);
         }
       } catch (err) {
+        // If a token exists but /users/me fails, treat it as an expired/revoked session.
+        try {
+          const token = typeof window !== "undefined" ? window.localStorage.getItem("gtn_token") : null;
+          const status = err?.status;
+          if (token && (status === 401 || status === 403)) {
+            window.localStorage.removeItem("gtn_token");
+            router.replace("/login");
+            return;
+          }
+        } catch {
+          /* ignore */
+        }
+
         console.warn("Failed to fetch user info, using guest mode:", err);
         setUser({
           id: null,
@@ -97,7 +110,7 @@ function DashboardContent() {
       setLoading(false);
     };
     fetchUser();
-  }, [applyUserProfile]);
+  }, [applyUserProfile, router]);
 
   useEffect(() => {
     if (!user?.dbId) return;

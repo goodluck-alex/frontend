@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import { LocaleProvider } from "@/contexts/localeContext";
+import ClientPolyfills from "@/components/ClientPolyfills";
 
 const BASE_URL = "https://gtnnetwork.com";
 
@@ -58,6 +59,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="bg-gray-100 dark:bg-gray-900">
+        <ClientPolyfills />
         <LocaleProvider>{children}</LocaleProvider>
       </body>
     </html>
