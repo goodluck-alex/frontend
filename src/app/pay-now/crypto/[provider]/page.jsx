@@ -6,6 +6,7 @@ import axios from "@/services/api";
 import { createOrInitiatePayment } from "@/services/paymentApi";
 import { useAuthedUser } from "@/lib/useAuthedUser";
 import PayShell from "@/components/PayShell";
+import { useLocalizedUsdPrice } from "@/hooks/useLocalizedUsdPrice";
 
 function Card({ title, children }) {
   return (
@@ -54,6 +55,7 @@ export default function PayNowCryptoProvider() {
   const [txHash, setTxHash] = useState("");
   const [createdOnce, setCreatedOnce] = useState(false);
   const [, setCountdownTick] = useState(0);
+  const displayPlanPrice = useLocalizedUsdPrice(Number(plan?.price || 0));
 
   const providerId = useMemo(() => String(provider || "").trim().toUpperCase(), [provider]);
 
@@ -200,7 +202,8 @@ export default function PayNowCryptoProvider() {
       <Card title={`Crypto • ${providerId}`}>
         <div className="plans-current-name">{plan?.name || planId}</div>
         <div className="plans-muted" style={{ marginTop: 4 }}>
-          Price: ${Number(plan?.price || 0).toFixed((plan?.price || 0) % 1 === 0 ? 0 : 2)}
+          Price: {displayPlanPrice.primary}{" "}
+          {displayPlanPrice.secondary ? <span className="plans-muted">{displayPlanPrice.secondary}</span> : null}
         </div>
       </Card>
 

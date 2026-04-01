@@ -63,7 +63,7 @@ export default function ReferralInviteShare({
       try {
         await navigator.share({
           title: "Join me on GTN",
-          text: "Sign up with my invite link to get bonus minutes.",
+          text: "I'd love for you to join me on GTN so we can chat, call, and stay connected.",
           url,
         });
         return;

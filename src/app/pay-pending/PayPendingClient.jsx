@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getPaymentStatus } from "@/services/paymentApi";
 import PayShell from "@/components/PayShell";
+import { formatCurrency } from "@/lib/currencyDisplay";
+import { useLocalizedUsdPrice } from "@/hooks/useLocalizedUsdPrice";
 
 export default function PayPendingClient() {
   const sp = useSearchParams();
@@ -11,7 +13,26 @@ export default function PayPendingClient() {
   const paymentId = sp.get("paymentId") || "";
   const provider = sp.get("provider") || "";
   const [status, setStatus] = useState("pending");
-  const [info, setInfo] = useState("");
+  const [payment, setPayment] = useState(null);
+  const info = useMemo(
+    () => (provider ? `Awaiting action (${provider})…` : "Awaiting action…"),
+    [provider]
+  );
+
+  const displayUsd = useLocalizedUsdPrice(Number(payment?.currency === "USD" ? payment?.amount : 0));
+  const amountLine = useMemo(() => {
+    if (!payment) return "";
+    const c = String(payment.currency || "").toUpperCase();
+    const a = Number(payment.amount);
+    if (!c || !Number.isFinite(a)) return "";
+    if (c === "USD") {
+      return `Amount: ${displayUsd.primary}${displayUsd.secondary ? ` ${displayUsd.secondary}` : ""}`;
+    }
+    if (c === "USDT") {
+      return `Amount: ${a} USDT`;
+    }
+    return `Amount: ${formatCurrency(a, c)}`;
+  }, [payment, displayUsd.primary, displayUsd.secondary]);
 
   useEffect(() => {
     if (!paymentId) return;
@@ -26,6 +47,7 @@ export default function PayPendingClient() {
         if (cancelled) return;
         const s = String(st?.status || "").toLowerCase();
         setStatus(s || "pending");
+        setPayment(st || null);
         if (s === "succeeded") {
           router.replace(`/pay-success?paymentId=${encodeURIComponent(paymentId)}`);
           return;
@@ -40,7 +62,6 @@ export default function PayPendingClient() {
       if (!cancelled && tries < maxTries) window.setTimeout(tick, 3000);
     };
 
-    setInfo(provider ? `Awaiting action (${provider})…` : "Awaiting action…");
     tick();
     return () => {
       cancelled = true;
@@ -64,6 +85,11 @@ export default function PayPendingClient() {
           <div className="plans-muted" style={{ marginTop: 6 }}>
             Status: {status}
           </div>
+          {amountLine ? (
+            <div className="plans-muted" style={{ marginTop: 6 }}>
+              {amountLine}
+            </div>
+          ) : null}
           <div className="plans-muted" style={{ marginTop: 10 }}>
             Keep this screen open while we confirm.
           </div>

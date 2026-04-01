@@ -161,13 +161,28 @@ function DashboardContent() {
 
   const openContactsInSettings = useCallback(() => navigateToSettingsSection("contacts"), [navigateToSettingsSection]);
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950 text-slate-100">
-        <div className="text-lg font-semibold">Opening GTN Dashboard</div>
-        <div className="mt-2 text-sm text-slate-400">Loading your telecom workspace...</div>
+  const LoadingScreen = ({ subtitle }) => (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-950 to-slate-900 text-slate-100">
+      <div className="flex flex-col items-center">
+        <div className="relative flex items-center justify-center">
+          <div
+            className="h-16 w-16 rounded-full border-[3px] border-white/30 border-t-cyan-400 border-r-emerald-400 animate-[spin_1.8s_linear_infinite]"
+            aria-hidden
+          />
+          <img
+            src="/gtn-icon.png"
+            alt="GTN"
+            className="absolute h-11 w-11 rounded-2xl shadow-lg"
+            draggable={false}
+          />
+        </div>
+        <div className="mt-5 text-sm text-slate-300">{subtitle}</div>
       </div>
-    );
+    </div>
+  );
+
+  if (loading) {
+    return <LoadingScreen subtitle="Loading your telecom workspace..." />;
   }
 
   return (
@@ -220,9 +235,22 @@ export default function Dashboard() {
   return (
     <Suspense
       fallback={
-        <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950 text-slate-100">
-          <div className="text-lg font-semibold">Opening GTN Dashboard</div>
-          <div className="mt-2 text-sm text-slate-400">Loading…</div>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-950 to-slate-900 text-slate-100">
+          <div className="flex flex-col items-center">
+            <div className="relative flex items-center justify-center">
+              <div
+                className="h-16 w-16 rounded-full border-[3px] border-white/30 border-t-cyan-400 border-r-emerald-400 animate-[spin_1.8s_linear_infinite]"
+                aria-hidden
+              />
+              <img
+                src="/gtn-icon.png"
+                alt="GTN"
+                className="absolute h-11 w-11 rounded-2xl shadow-lg"
+                draggable={false}
+              />
+            </div>
+            <div className="mt-5 text-sm text-slate-300">Loading…</div>
+          </div>
         </div>
       }
     >

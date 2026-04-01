@@ -12,6 +12,8 @@ import styles from "./page.module.css";
 
 const ANDROID_URL = process.env.NEXT_PUBLIC_ANDROID_STORE_URL || "#";
 const IOS_URL = process.env.NEXT_PUBLIC_IOS_STORE_URL || "#";
+const X_URL = process.env.NEXT_PUBLIC_X_URL || "https://x.com/";
+const LINKEDIN_URL = process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://www.linkedin.com/";
 
 function AuthFallback() {
   return (
@@ -74,7 +76,30 @@ export default function HeroClient() {
           <Link href="/login" className={styles.heroSecondaryLink}>
             Open sign in full screen
           </Link>
-          
+
+        </div>
+
+        <div className={styles.heroSocialRow} aria-label="Social links">
+          <a
+            href={X_URL}
+            className={styles.heroSocialIcon}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Twitter / X"
+            title="Twitter / X"
+          >
+            <Image src="/icons/x.svg" alt="" width={20} height={20} aria-hidden />
+          </a>
+          <a
+            href={LINKEDIN_URL}
+            className={styles.heroSocialIcon}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            title="LinkedIn"
+          >
+            <Image src="/icons/linkedin.svg" alt="" width={22} height={22} aria-hidden />
+          </a>
         </div>
       </div>
     </main>

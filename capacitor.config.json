@@ -1,0 +1,10 @@
+{
+  "appId": "com.gtn.app",
+  "appName": "GTN",
+  "webDir": "out",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://my-gtn.vercel.app",
+    "cleartext": false
+  }
+}

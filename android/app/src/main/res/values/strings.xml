@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">GTN</string>
+    <string name="title_activity_main">GTN</string>
+    <string name="package_name">com.gtn.app</string>
+    <string name="custom_url_scheme">com.gtn.app</string>
+</resources>
