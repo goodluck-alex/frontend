@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { createChatSocket } from "@/services/chatSocket";
 import { isGtnMessageNotificationsDisabled } from "@/lib/messageNotificationsPrefs";
+import { registerNativePushToken } from "@/lib/nativePushRegistration";
 
 const ChatSocketContext = createContext(null);
 
@@ -81,6 +82,11 @@ export function ChatSocketProvider({ user, children }) {
       socketRef.current = null;
       setSocket(null);
     };
+  }, [user?.dbId]);
+
+  useEffect(() => {
+    if (!user?.dbId) return;
+    void registerNativePushToken();
   }, [user?.dbId]);
 
   useEffect(() => {
