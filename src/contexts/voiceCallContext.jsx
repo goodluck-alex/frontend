@@ -21,6 +21,8 @@ import {
   scheduleSimplePeerAudioBitrateTuning,
 } from "@/lib/voiceMediaPreferences";
 import { startIncomingCallRing, stopIncomingCallRing } from "@/lib/incomingCallRing";
+import { startOutgoingCallRing, stopOutgoingCallRing } from "@/lib/outgoingCallRing";
+import { alertIncomingCallBackground, clearIncomingCallAlerts } from "@/lib/incomingCallAlerts";
 
 const VoiceCallContext = createContext(null);
 
@@ -69,6 +71,8 @@ export function VoiceCallProvider({ user, children }) {
 
   /** idle | dialing | incoming | connected */
   const [callState, setCallState] = useState("idle");
+  /** Outbound dial tone only when "outbound"; callee post-accept "dialing" uses "inbound_connecting". */
+  const [callLeg, setCallLeg] = useState(null);
   const [incomingFrom, setIncomingFrom] = useState(null);
   const [remoteLabel, setRemoteLabel] = useState("");
   const [lastRoute, setLastRoute] = useState(null);
@@ -110,6 +114,9 @@ export function VoiceCallProvider({ user, children }) {
   const cleanupPeer = useCallback(
     (notifyOther, options = {}) => {
       stopIncomingCallRing();
+      stopOutgoingCallRing();
+      void clearIncomingCallAlerts();
+      setCallLeg(null);
       stopBilling();
       const { remoteEnded = false } = options;
       const partner = callPartnerRef.current;
@@ -172,6 +179,15 @@ export function VoiceCallProvider({ user, children }) {
   }, [callState, incomingFrom]);
 
   useEffect(() => {
+    if (callState !== "dialing" || callLeg !== "outbound") {
+      stopOutgoingCallRing();
+      return;
+    }
+    startOutgoingCallRing();
+    return () => stopOutgoingCallRing();
+  }, [callState, callLeg]);
+
+  useEffect(() => {
     const s = chatSocket ?? socketRef.current;
     if (!s || !myPhone) return;
 
@@ -188,6 +204,7 @@ export function VoiceCallProvider({ user, children }) {
         setIncomingFrom(fromUserId);
         pendingSignalsRef.current.push(signal);
         setCallState("incoming");
+        void alertIncomingCallBackground(fromUserId);
       } else {
         peerRef.current.signal(signal);
       }
@@ -268,6 +285,8 @@ export function VoiceCallProvider({ user, children }) {
     const s = socketRef.current;
     if (!callerPhone || !s?.connected) return;
 
+    void clearIncomingCallAlerts();
+    setCallLeg("inbound_connecting");
     isOutboundRef.current = false;
     activeCallIdRef.current = incomingCallIdRef.current;
     incomingCallIdRef.current = null;
@@ -336,9 +355,12 @@ export function VoiceCallProvider({ user, children }) {
     if (caller && s?.connected) {
       s.emit("reject_call", { toUserId: caller, toUserDbId: incomingFromDbIdRef.current ?? null });
     }
+    stopIncomingCallRing();
     pendingSignalsRef.current = [];
     incomingFromRef.current = null;
     incomingCallIdRef.current = null;
+    void clearIncomingCallAlerts();
+    setCallLeg(null);
     setIncomingFrom(null);
     setCallState("idle");
   }, [socketRef]);
@@ -422,6 +444,7 @@ export function VoiceCallProvider({ user, children }) {
       });
 
       setRemoteLabel(normalized);
+      setCallLeg("outbound");
       setCallState("dialing");
       setLastRoute(null);
     },
