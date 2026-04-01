@@ -14,6 +14,7 @@ const ANDROID_URL = process.env.NEXT_PUBLIC_ANDROID_STORE_URL || "#";
 const IOS_URL = process.env.NEXT_PUBLIC_IOS_STORE_URL || "#";
 const X_URL = process.env.NEXT_PUBLIC_X_URL || "https://x.com/";
 const LINKEDIN_URL = process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://www.linkedin.com/";
+const ANDROID_APK_URL = "/downloads/app-release.apk";
 
 function AuthFallback() {
   return (
@@ -50,9 +51,9 @@ export default function HeroClient() {
           <p className={styles.downloadLabel}>Download App</p>
           <div className={styles.storeRow}>
             <a
-              href={ANDROID_URL}
+              href={ANDROID_APK_URL}
               className={styles.storeBtn}
-              {...(ANDROID_URL !== "#" ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              download
             >
               <span className={styles.storeIcon} aria-hidden>
                 <SiGoogleplay size={22} />
