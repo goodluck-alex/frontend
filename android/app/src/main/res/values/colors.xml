@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0072CE</color>
+    <color name="colorPrimaryDark">#005696</color>
+    <color name="colorAccent">#76D13F</color>
+    <color name="gtnBlue">#0072CE</color>
+    <color name="gtnGreen">#76D13F</color>
+    <color name="gtnWhite">#FFFFFF</color>
+</resources>
