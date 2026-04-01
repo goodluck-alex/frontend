@@ -53,6 +53,7 @@ export function VoiceCallProvider({ user, children }) {
 
   const peerRef = useRef(null);
   const incomingFromRef = useRef(null);
+  const incomingFromDbIdRef = useRef(null);
   const incomingCallIdRef = useRef(null);
   const activeCallIdRef = useRef(null);
   const callConnectedAtRef = useRef(null);
@@ -122,6 +123,7 @@ export function VoiceCallProvider({ user, children }) {
       peerRef.current = null;
       callPartnerRef.current = null;
       incomingFromRef.current = null;
+      incomingFromDbIdRef.current = null;
       incomingCallIdRef.current = null;
       activeCallIdRef.current = null;
       callConnectedAtRef.current = null;
@@ -156,10 +158,11 @@ export function VoiceCallProvider({ user, children }) {
     const s = socketRef.current;
     if (!s || !myPhone) return;
 
-    const onIncoming = ({ fromUserId, signal, callId }) => {
+    const onIncoming = ({ fromUserId, fromUserDbId, signal, callId }) => {
       if (!fromUserId || signal == null) return;
       if (!peerRef.current) {
         incomingFromRef.current = fromUserId;
+        incomingFromDbIdRef.current = fromUserDbId ?? null;
         if (callId != null) incomingCallIdRef.current = callId;
         setIncomingFrom(fromUserId);
         pendingSignalsRef.current.push(signal);
@@ -251,7 +254,11 @@ export function VoiceCallProvider({ user, children }) {
       pendingSignalsRef.current = [];
 
       peer.on("signal", (data) => {
-        s.emit("answer_call", { toUserId: callerPhone, signal: data });
+        s.emit("answer_call", {
+          toUserId: callerPhone,
+          toUserDbId: incomingFromDbIdRef.current ?? null,
+          signal: data,
+        });
       });
 
       peer.on("stream", (remoteStream) => {
@@ -288,7 +295,7 @@ export function VoiceCallProvider({ user, children }) {
     const caller = incomingFromRef.current;
     const s = socketRef.current;
     if (caller && s?.connected) {
-      s.emit("reject_call", { toUserId: caller });
+      s.emit("reject_call", { toUserId: caller, toUserDbId: incomingFromDbIdRef.current ?? null });
     }
     pendingSignalsRef.current = [];
     incomingFromRef.current = null;
@@ -298,7 +305,7 @@ export function VoiceCallProvider({ user, children }) {
   }, [socketRef]);
 
   const startOutgoing = useCallback(
-    async (receiverPhone, callId) => {
+    async (receiverPhone, callId, receiverUserId) => {
       const s = socketRef.current;
       if (!s?.connected) {
         throw new Error("Not connected to GTN. Check your network.");
@@ -347,6 +354,7 @@ export function VoiceCallProvider({ user, children }) {
         s.emit("call_user", {
           fromUserId: myPhone,
           toUserId: normalized,
+          toUserDbId: receiverUserId ?? null,
           signal: data,
           callId,
         });

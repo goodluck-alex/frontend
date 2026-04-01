@@ -84,9 +84,11 @@ export function useDialCall(user) {
       }
 
       let callId;
+      let receiverUserId;
       try {
         const startRes = await axios.post("/calls/start", { receiverPhone: normalized });
         callId = startRes?.data?.id;
+        receiverUserId = startRes?.data?.receiverUserId ?? startRes?.data?.receiverUserID ?? null;
       } catch (err) {
         console.error("Call failed:", err);
         const data = err?.data ?? err?.response?.data;
@@ -100,7 +102,7 @@ export function useDialCall(user) {
 
       if (voice?.startOutgoing) {
         try {
-          await voice.startOutgoing(normalized, callId);
+          await voice.startOutgoing(normalized, callId, receiverUserId);
         } catch (webrtcErr) {
           const msg = webrtcErr?.message || "Browser voice could not start.";
           // Keep this non-scary for “no mic device” cases; treat it as a normal environment issue.
