@@ -69,6 +69,9 @@ export function VoiceCallProvider({ user, children }) {
   const [callState, setCallState] = useState("idle");
   const [incomingFrom, setIncomingFrom] = useState(null);
   const [remoteLabel, setRemoteLabel] = useState("");
+  const [lastRoute, setLastRoute] = useState(null);
+  const [socketConnected, setSocketConnected] = useState(false);
+  const [lastSignalFailure, setLastSignalFailure] = useState(null);
 
   const voiceMediaPrefs = useMemo(() => getVoiceMediaPrefs(user), [user]);
 
@@ -146,6 +149,8 @@ export function VoiceCallProvider({ user, children }) {
       setCallState("idle");
       setIncomingFrom(null);
       setRemoteLabel("");
+      setLastRoute(null);
+      setLastSignalFailure(null);
     },
     [socketRef, stopBilling]
   );
@@ -157,6 +162,10 @@ export function VoiceCallProvider({ user, children }) {
   useEffect(() => {
     const s = socketRef.current;
     if (!s || !myPhone) return;
+
+    const onConnect = () => setSocketConnected(true);
+    const onDisconnect = () => setSocketConnected(false);
+    setSocketConnected(Boolean(s.connected));
 
     const onIncoming = ({ fromUserId, fromUserDbId, signal, callId }) => {
       if (!fromUserId || signal == null) return;
@@ -181,6 +190,7 @@ export function VoiceCallProvider({ user, children }) {
     };
 
     const onFailed = ({ reason }) => {
+      setLastSignalFailure({ reason: reason || "unknown", at: Date.now() });
       console.warn(
         "[GTN voice]",
         reason === "offline"
@@ -195,18 +205,34 @@ export function VoiceCallProvider({ user, children }) {
       cleanupPeer(false);
     };
 
+    const onRouted = (payload) => {
+      // Helps debug “silent” call failures in production.
+      setLastRoute(payload || null);
+      if (payload && payload.ok === false) {
+        // If the server couldn't route the call, don't leave caller stuck in "dialing".
+        setLastSignalFailure({ reason: payload.route || "route_failed", at: Date.now() });
+        cleanupPeer(false);
+      }
+    };
+
+    s.on("connect", onConnect);
+    s.on("disconnect", onDisconnect);
     s.on("incoming_call", onIncoming);
     s.on("call_answered", onAnswered);
     s.on("call_ended", onEnded);
     s.on("call_failed", onFailed);
     s.on("call_rejected", onRejected);
+    s.on("call_routed", onRouted);
 
     return () => {
+      s.off("connect", onConnect);
+      s.off("disconnect", onDisconnect);
       s.off("incoming_call", onIncoming);
       s.off("call_answered", onAnswered);
       s.off("call_ended", onEnded);
       s.off("call_failed", onFailed);
       s.off("call_rejected", onRejected);
+      s.off("call_routed", onRouted);
     };
   }, [socketRef, myPhone, cleanupPeer]);
 
@@ -283,6 +309,7 @@ export function VoiceCallProvider({ user, children }) {
       setCallState("dialing");
       setIncomingFrom(null);
       setRemoteLabel(callerPhone);
+      setLastRoute(null);
     } catch (e) {
       console.error(e);
       console.warn("[GTN voice]", "Microphone permission is required to answer.");
@@ -384,6 +411,7 @@ export function VoiceCallProvider({ user, children }) {
 
       setRemoteLabel(normalized);
       setCallState("dialing");
+      setLastRoute(null);
     },
     [myPhone, socketRef, cleanupPeer, startBilling, getAudioStreamSafe, voiceMediaPrefs]
   );
@@ -392,6 +420,9 @@ export function VoiceCallProvider({ user, children }) {
     callState,
     remoteLabel,
     incomingFrom,
+    lastRoute,
+    socketConnected,
+    lastSignalFailure,
     startOutgoing,
     acceptIncoming,
     rejectIncoming,

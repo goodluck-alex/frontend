@@ -29,6 +29,7 @@ export default function DialPad({ user, onOpenContactsSettings }) {
     prepLoaded,
     balanceFetchFailed,
     allowZeroBalance,
+    lastCallAttempt,
   } = useDialCall(user);
 
   const { lastSyncedAt } = useContacts();
@@ -125,6 +126,8 @@ export default function DialPad({ user, onOpenContactsSettings }) {
             : "No minutes";
 
   const canTapCall = Boolean(user?.id && !voiceBusy);
+  const showCallDebug =
+    typeof process !== "undefined" && process.env.NEXT_PUBLIC_CALL_DEBUG === "true";
 
   return (
     <div className="phone-screen phone-screen-dark">
@@ -283,6 +286,33 @@ export default function DialPad({ user, onOpenContactsSettings }) {
         {voiceError ? (
           <div className="dial-webrtc-error" role="alert" aria-live="polite">
             {voiceError}
+          </div>
+        ) : null}
+        {voice?.lastRoute && voice?.lastRoute?.ok === false ? (
+          <div className="dial-webrtc-error" role="alert" aria-live="polite">
+            Call routing failed: {voice.lastRoute.route || "unknown"}
+          </div>
+        ) : null}
+        {showCallDebug ? (
+          <div className="dial-webrtc-error" role="status" aria-live="polite" style={{ opacity: 0.9 }}>
+            <div style={{ fontWeight: 700, marginBottom: 6 }}>Call Debug</div>
+            <div>Socket connected: {voice?.socketConnected ? "yes" : "no"}</div>
+            <div>Call state: {voice?.callState || "—"}</div>
+            <div>Last attempt: {lastCallAttempt?.receiverPhone || "—"}</div>
+            <div>Receiver userId: {String(lastCallAttempt?.receiverUserId ?? "—")}</div>
+            <div>CallId: {String(lastCallAttempt?.callId ?? "—")}</div>
+            <div>
+              Route:{" "}
+              {voice?.lastRoute
+                ? `${voice.lastRoute.ok ? "ok" : "fail"} • ${voice.lastRoute.route || "—"}`
+                : "—"}
+            </div>
+            <div>
+              Last failure:{" "}
+              {voice?.lastSignalFailure?.reason
+                ? `${voice.lastSignalFailure.reason}`
+                : "—"}
+            </div>
           </div>
         ) : null}
         <button

@@ -27,6 +27,7 @@ export function useDialCall(user) {
   const [planUnlimited, setPlanUnlimited] = useState(false);
   const [prepLoaded, setPrepLoaded] = useState(false);
   const [balanceFetchFailed, setBalanceFetchFailed] = useState(false);
+  const [lastCallAttempt, setLastCallAttempt] = useState(null);
   const allowZeroBalance = useMemo(() => canPlaceCallWithoutBalance(), []);
 
   const loadPrep = useCallback(async () => {
@@ -89,6 +90,12 @@ export function useDialCall(user) {
         const startRes = await axios.post("/calls/start", { receiverPhone: normalized });
         callId = startRes?.data?.id;
         receiverUserId = startRes?.data?.receiverUserId ?? startRes?.data?.receiverUserID ?? null;
+        setLastCallAttempt({
+          at: Date.now(),
+          callId: callId ?? null,
+          receiverPhone: normalized,
+          receiverUserId: receiverUserId ?? null,
+        });
       } catch (err) {
         console.error("Call failed:", err);
         const data = err?.data ?? err?.response?.data;
@@ -138,5 +145,6 @@ export function useDialCall(user) {
     prepLoaded,
     balanceFetchFailed,
     allowZeroBalance,
+    lastCallAttempt,
   };
 }
