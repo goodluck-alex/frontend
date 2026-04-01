@@ -32,7 +32,8 @@ export function normalizeDialPhone(raw) {
 }
 
 export function VoiceCallProvider({ user, children }) {
-  const { socketRef } = useChatSocket();
+  /** `socket` state must be in effect deps: child Effects run before parent, so on first run `socketRef.current` is often still null. */
+  const { socketRef, socket: chatSocket } = useChatSocket();
   // "fromUserId" must be a phone identity (E.164-ish), not a domain/user id.
   const myPhone = (() => {
     const raw =
@@ -160,7 +161,7 @@ export function VoiceCallProvider({ user, children }) {
   }, [cleanupPeer]);
 
   useEffect(() => {
-    const s = socketRef.current;
+    const s = chatSocket ?? socketRef.current;
     if (!s || !myPhone) return;
 
     const onConnect = () => setSocketConnected(true);
@@ -234,10 +235,10 @@ export function VoiceCallProvider({ user, children }) {
       s.off("call_rejected", onRejected);
       s.off("call_routed", onRouted);
     };
-  }, [socketRef, myPhone, cleanupPeer]);
+  }, [chatSocket, socketRef, myPhone, cleanupPeer]);
 
   useEffect(() => {
-    const s = socketRef.current;
+    const s = chatSocket ?? socketRef.current;
     if (!s) return;
     const onBillingFailed = (payload) => {
       if (payload?.error === "insufficient") {
@@ -249,7 +250,7 @@ export function VoiceCallProvider({ user, children }) {
     return () => {
       s.off("call_billing_failed", onBillingFailed);
     };
-  }, [socketRef, cleanupPeer]);
+  }, [chatSocket, socketRef, cleanupPeer]);
 
   const acceptIncoming = useCallback(async () => {
     const callerPhone = incomingFromRef.current;
