@@ -20,6 +20,7 @@ import {
   getVoiceMediaPrefs,
   scheduleSimplePeerAudioBitrateTuning,
 } from "@/lib/voiceMediaPreferences";
+import { startIncomingCallRing, stopIncomingCallRing } from "@/lib/incomingCallRing";
 
 const VoiceCallContext = createContext(null);
 
@@ -108,6 +109,7 @@ export function VoiceCallProvider({ user, children }) {
 
   const cleanupPeer = useCallback(
     (notifyOther, options = {}) => {
+      stopIncomingCallRing();
       stopBilling();
       const { remoteEnded = false } = options;
       const partner = callPartnerRef.current;
@@ -159,6 +161,15 @@ export function VoiceCallProvider({ user, children }) {
   const endCall = useCallback(() => {
     cleanupPeer(true);
   }, [cleanupPeer]);
+
+  useEffect(() => {
+    if (callState !== "incoming" || !incomingFrom) {
+      stopIncomingCallRing();
+      return;
+    }
+    startIncomingCallRing();
+    return () => stopIncomingCallRing();
+  }, [callState, incomingFrom]);
 
   useEffect(() => {
     const s = chatSocket ?? socketRef.current;
